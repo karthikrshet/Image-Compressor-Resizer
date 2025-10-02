@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Image Compressor & Resizer</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Montserrat',sans-serif}
+body{background:linear-gradient(to right,#74ABE2,#5563DE);display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:20px;color:#fff}
+.container{background:rgba(255,255,255,.15);padding:30px;border-radius:10px;max-width:900px;width:100%;text-align:center}
+input,select,button{padding:10px;border:none;border-radius:6px;font-size:14px;margin:6px}
+button{background:#ff7b54;color:#fff;cursor:pointer}
+button:hover{background:#ff5722}
+.row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:8px}
+.preview{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+.card{background:#fff;color:#000;border-radius:8px;padding:10px}
+img{max-width:100%;border-radius:6px}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Image Compressor & Resizer</h1>
+<div class="row">
+<input type="file" id="file" accept="image/*"/>
+<input type="number" id="width" placeholder="Target Width (px)"/>
+<select id="format"><option value="image/jpeg">JPEG</option><option value="image/png">PNG</option><option value="image/webp">WEBP</option></select>
+<input type="range" id="quality" min="0.1" max="1" step="0.05" value="0.8"/>
+<button id="process">Process</button>
+<button id="download" disabled>Download</button>
+</div>
+<div class="preview">
+<div class="card"><h3>Original</h3><img id="origImg"><p id="origMeta"></p></div>
+<div class="card"><h3>Processed</h3><img id="outImg"><p id="outMeta"></p></div>
+</div>
+</div>
+<script>
+const fileEl=file, wEl=width, qEl=quality, fmtEl=format, btn=process, dl=download,
+origImg=document.getElementById('origImg'), outImg=document.getElementById('outImg'),
+om=document.getElementById('origMeta'), pm=document.getElementById('outMeta');
+let outBlob=null, fileName='output';
+
+
+function sizeStr(bytes){const u=['B','KB','MB','GB'];let i=0;let n=bytes;while(n>1024&&i<u.length-1){n/=1024;i++}return n.toFixed(2)+' '+u[i]}
+
+
+fileEl.addEventListener('change',()=>{
+const f=fileEl.files[0]; if(!f) return; fileName=f.name.replace(/\.[^.]+$/,'');
+const url=URL.createObjectURL(f); origImg.src=url; om.textContent=`${f.type} • ${sizeStr(f.size)}`;
+const img=new Image(); img.onload=()=>{om.textContent+=` • ${img.naturalWidth}x${img.naturalHeight}`}; img.src=url;
+});
+
+
+</html>
